@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Flying Birds Demo</title>
+	</head>
+	<body>
+	    <script type="text/javascript" src="js/iioEngine.min.js"></script>
+    	<script type="text/javascript">
+    		DrawSquareApp = function(io){ 
+				//draw a 60x60 blue square at canvas center
+				io.addObj(new iio.Rect(io.canvas.center,60)
+				  .setFillStyle('blue'));    		 
+
+    		}; 
+    		
+    		ShadowSquareApp = function(io){
+    			 
+    			  io.setBGColor('white');
+    			  
+    			 
+    			  var blueSquare = new iio.Rect(io.canvas.center,60);
+    			  blueSquare.setFillStyle('#00baff');
+    			  blueSquare.setStrokeStyle('black');
+    			  blueSquare.setShadow('rgb(150,150,150)',10,10,4);
+    			  blueSquare.enableKinematics();
+    			  blueSquare.setTorque(.15);
+
+    			 
+    			  io.setFramerate(40, blueSquare);
+    			 
+    			};
+    			
+   			MultiSquareApp = function(io){
+    				 
+    				  for (var x=50; x<500; x+=120)
+    				    io.addObj(new iio.Rect(x,50,60)
+    				      .setStrokeStyle('#FA5858',8)
+    				      .enableKinematics()
+    				      .setTorque(.02))
+    				      .setFillStyle('#FA5858');
+    				  io.setFramerate(50);
+   			}
+   			
+   			FlyAnimsApp = function(io){
+   				io.setBGColor('#909090');
+   			  
+   			  var flies = [];
+   			  var j = 0;
+              //define an initialization function
+   			  initApp=function(){ 
+   				  	
+   			  	for (var i=70; i<io.canvas.width; i+=100) {
+   			    	flies[j] = 	new iio.Rect(i,iio.getRandomInt(30,60)).createWithAnim(imgs)
+   			      	io.setAnimFPS(i/20, flies[j]);
+   			 		 flies[j].enableKinematics();
+   			 		 flies[j].setVel(2,5);
+   			 		 flies[j].setBound('bottom', io.canvas.height
+   	   			        ,function(obj){
+   	   			          obj.vel.y = -5;
+   	   			          return true;
+   	   			        });
+   			 		flies[j].setBound('top', 0
+   	   	   			        ,function(obj){
+   	   	   			          obj.vel.y = +5;
+   	   	   			          return true;
+   	   	   			        });
+   			 		flies[j].setBound('right', io.canvas.width
+   	   	   			        ,function(obj){
+   	   	   			          obj.vel.x = -2;
+   	   	   			          return true;
+   	   	   			        });
+
+   			 		flies[j].setBound('left', 0
+   	   	   			        ,function(obj){
+   	   	   			          obj.vel.x = +2;
+   	   	   			          return true;
+   	   	   			        });
+
+
+   			    	j++;
+   			  	}
+   			  };
+   			 
+   			  //load the source images
+   			  var imgs = [];
+   			  imgs[0] = new Image();
+   			  imgs[0].src='img/fly_normal.png';
+   			  imgs[1] = new Image();
+   			  imgs[1].src='img/fly_fly.png';
+   			 
+   			  //initialize app once the first image has loaded
+   			  imgs[0].onload = initApp;
+   			 
+   			}; 
+   			
+   			
+   			
+   			RicardoCavoloApp = function(io){
+   			 
+   			  //define an initialization function
+   			  initApp=function(){
+   			    
+  			  	io.setAnimFPS(1,  new iio.Rect(500,300).createWithAnim(imgs));
+   			  }
+   			 
+   			  //load the source images
+   			  var imgs = [];
+   			  imgs[0] = new Image();
+   			  imgs[0].src='img/SergeiValakov/SergeiValakov1.jpg';
+   			  imgs[1] = new Image();
+   			  imgs[1].src='img/SergeiValakov/SergeiValakov2.jpg';
+   			  imgs[2] = new Image();
+   			  imgs[2].src = 'img/SergeiValakov/SergeiValakov3.jpg';
+   			  imgs[3] = new Image();
+   			  imgs[3].src = 'img/SergeiValakov/SergeiValakov4.jpg';
+   			 
+   			  //initialize app once the first image has loaded
+   			  imgs[0].onload = initApp;
+   			 
+   			}; 
+   			BoxBoundsApp = function(io){
+   			 
+   			  io.addObj(new iio.Rect(io.canvas.center,50)
+   			      .setFillStyle('#FA5858')
+   			      .enableKinematics()
+   			      .setVel(5,0)
+   			      .setBound('left', 0
+   			        ,function(obj){
+   			          obj.vel.x = 1;
+   			          return true;
+   			         })
+   			      .setBound('right', io.canvas.width
+   			        ,function(obj){
+   			          obj.vel.x = -1;
+   			          return true;
+   			        }));
+   			 
+   			  //set the framerate to 100fps
+   			  io.setFramerate(100);
+   			 
+   			}; 
+   			
+   			
+   			CollidingBoxes = function(io){
+   			 
+   			  createBox = function(xPos, xVel, fillStyle){
+   			    io.addToGroup('boxes'
+   			      ,new iio.Rect(xPos,io.canvas.center.y,50)
+   			      .setFillStyle(fillStyle)
+   			      .enableKinematics()
+   			      .setVel(xVel,0)
+   			      .setBound('left', 0
+   			        ,function(obj){
+   			          obj.vel.x = 3;
+   			          return true;
+   			         })
+   			      .setBound('right', io.canvas.width
+   			        ,function(obj){
+   			          obj.vel.x = -3;
+   			          return true;
+   			        }));
+   			  }
+   			 
+   			  createBox(40, 3, '#00baff');
+   			  createBox(io.canvas.width-40, -3, 'red');
+   			 
+   			  io.setCollisionCallback('boxes'
+   			    ,function(box1,box2){
+   			       var temp = box1.vel;
+   			       box1.vel = box2.vel;
+   			       box2.vel = temp;
+   			     });
+   			 
+   			  io.setFramerate(60)
+   			 
+   			};
+   			
+   			
+   			var dragNDrop = function(io) {
+   					var dibujo;
+  					var imgDibujoCavolo = iio.loadImage('img/SergeiValakov/SergeiValakov1.jpg');
+  				
+  					 dibujo = io.addToGroup('dibujoCavolo'
+  			   	            ,new iio.SimpleRect(70,70))
+  			   	                .createWithImage(imgDibujoCavolo).enableKinematics();
+  				
+					io.addObj(dibujo);
+					io.setFramerate(100);
+  		   				var selected = -1;
+  		   	 			var dV;
+  		   	 			
+  		   	 			var draggables = [];
+  		   	 			
+  		   	 			draggables[0] = dibujo;
+  		   	 			
+  			   			//handle mouse down
+  		   			  io.canvas.addEventListener('mousedown', function(event){
+  		   			    
+
+  		   			    //prevent text selection
+  		   			    event.preventDefault();
+  		   			 
+  		   			    //check for selected objects
+  		   			    
+  		   			    console.log('MOUSEDOWN->draggables.length: ' + draggables.length);
+  		   			 	var minIndice = draggables.length-1;
+  		   			 	console.log('MININDICE: ' + minIndice);
+  		   			    for (var indice=minIndice;indice<draggables.length;indice++) {
+  		   			    	
+  		   			 		
+  		   			    	
+  		   			    	var isInside = draggables[indice].contains(io.getEventPosition(event));
+  		   			    	console.log('MOUSEDOWN->isInside: ' + isInside);
+  		   			    	
+  		   			      if (draggables[indice].contains(io.getEventPosition(event))){
+  		   			          draggables[indice].active = true;
+  		   			          dV=iio.Vec.sub(draggables[indice].pos
+  		   			             ,io.getEventPosition(event));
+  		   			          
+  		   			          selected=indice;
+  		   			    	   console.log('SELECTED IN MOUSEDOWN: ' + selected);
+
+  		   			          return;
+  		   			      }
+  		   			  	}
+  		   			  });
+  		   			 
+  		   			  //handle mouse move
+  		   			  io.canvas.addEventListener('mousemove', function(event){
+  		   				  	console.log('mousemove');
+  		   				  	console.log('selected: ' + selected);
+  		   			      if (selected>-1) {
+  		   			          draggables[selected]
+  		   			            .setPos(io.getEventPosition(event)
+  		   			            .add(dV));
+  		   			          console.log('POS IMG MOUSE MOVE: ' + draggables[selected].pos);
+  		   			        }
+  		   			  });
+  		   			 
+  		   			  //handle mouse up
+  		   			  function deselect(event){ selected=-1;console.log('MOUSEUP'); }
+  		   			  io.canvas.addEventListener('mouseup', deselect);
+  		   			  //release circle when mouse moves off canvas
+  		   			  this.focusOff = deselect;
+  		   			 
+		   		
+   			};
+   
+
+    		iio.start(FlyAnimsApp);
+    	</script>
+	</body>
+</html>
